@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Shimeji Screen-Time</title>
+  <style>
+    body { font: 14px/1.5 system-ui, Segoe UI, sans-serif; max-width: 520px; margin: 24px auto; padding: 0 16px; color: #222; }
+    h1 { font-size: 18px; }
+    label { display: block; font-weight: 600; margin: 16px 0 4px; }
+    textarea, input { width: 100%; box-sizing: border-box; font: inherit; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .row { display: flex; gap: 12px; }
+    .row > div { flex: 1; }
+    .hint { color: #777; font-weight: 400; font-size: 12px; }
+    #status { background: #f2f6ff; border: 1px solid #d7e3ff; padding: 8px 12px; border-radius: 8px; }
+    .actions { margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+    button { font: inherit; padding: 8px 14px; border: 0; border-radius: 8px; cursor: pointer; }
+    #save { background: #4c7dff; color: #fff; }
+    #test { background: #eee; }
+    #reset { background: #ffecec; color: #a33; }
+    .saved { color: #2a8; font-weight: 600; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🐾 Shimeji Screen-Time</h1>
+  <p id="status">Loading…</p>
+
+  <label>Entertainment sites <span class="hint">(one domain per line, e.g. youtube.com)</span></label>
+  <textarea id="domains" rows="8"></textarea>
+
+  <label>Daily mood thresholds <span class="hint">(minutes on entertainment sites)</span></label>
+  <div class="row">
+    <div><span class="hint">Ok after</span><input id="t-ok" type="number" min="1"></div>
+    <div><span class="hint">Bad after</span><input id="t-bad" type="number" min="1"></div>
+    <div><span class="hint">Disastrous after</span><input id="t-disastrous" type="number" min="1"></div>
+  </div>
+
+  <div class="row">
+    <div><label>Appears every <span class="hint">(minutes)</span></label><input id="appear" type="number" min="1"></div>
+  </div>
+
+  <div class="actions">
+    <button id="save">Save</button>
+    <button id="test">Test appearance now</button>
+    <button id="reset">Reset today's totals</button>
+    <span id="savedMsg"></span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

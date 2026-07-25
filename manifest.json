@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Shimeji Screen-Time",
+  "version": "0.1.0",
+  "description": "A cute avatar that walks in from the bottom-right and reacts to how long you've spent on entertainment sites today.",
+  "permissions": ["tabs", "storage", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["sprites/*.png"], "matches": ["<all_urls>"] }
+  ],
+  "action": { "default_title": "Show Shimeji now" },
+  "options_page": "options.html"
+}
