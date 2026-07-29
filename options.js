@@ -5,7 +5,7 @@ const DEFAULTS = {
     'primevideo.com', '9gag.com', 'pinterest.com', 'hbomax.com'
   ],
   thresholds: { ok: 30, bad: 60, disastrous: 90 },
-  appearEveryMin: 30
+  appearEveryMin: 60
 };
 
 const $ = (id) => document.getElementById(id);
@@ -21,21 +21,28 @@ async function load() {
   $('appear').value = c.appearEveryMin;
 
   chrome.runtime.sendMessage({ type: 'shimeji-status' }, (r) => {
-    if (chrome.runtime.lastError || !r) { $('status').textContent = 'No data yet, browse a bit first.'; return; }
-    // $('status').textContent = `Today: ${r.minutes} min on entertainment • current mood: ${r.mood}`;
+    if (chrome.runtime.lastError || !r) { $('status').textContent = 'No data yet, browse a bit first.'; } else
+    { $('status').textContent = `${r.minutes} minutes spent on entertainment today (${r.mood})`; }
   });
 }
+
+// Read a whole-minute value >= 1 from a field, falling back to `def` for
+// empty, non-numeric, or out-of-range (zero/negative) input.
+const numOr = (id, def) => {
+  const n = Math.floor(Number($(id).value));
+  return Number.isFinite(n) && n >= 1 ? n : def;
+};
 
 async function save() {
   const domains = $('domains').value.split('\n').map(s => s.trim().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '')).filter(Boolean);
   const config = {
     entertainmentDomains: domains,
     thresholds: {
-      ok: Number($('t-ok').value) || DEFAULTS.thresholds.ok,
-      bad: Number($('t-bad').value) || DEFAULTS.thresholds.bad,
-      disastrous: Number($('t-disastrous').value) || DEFAULTS.thresholds.disastrous
+      ok: numOr('t-ok', DEFAULTS.thresholds.ok),
+      bad: numOr('t-bad', DEFAULTS.thresholds.bad),
+      disastrous: numOr('t-disastrous', DEFAULTS.thresholds.disastrous)
     },
-    appearEveryMin: Number($('appear').value) || DEFAULTS.appearEveryMin
+    appearEveryMin: numOr('appear', DEFAULTS.appearEveryMin)
   };
   await chrome.storage.local.set({ config });
   chrome.runtime.sendMessage({ type: 'shimeji-config-updated' });
