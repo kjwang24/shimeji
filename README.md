@@ -1,8 +1,9 @@
 # Shimeji for Screen-Time
 
 A cute lil guy (just Kirby, for now) that walks into the bottom-right corner of your
-browser every now and then to remind you how much screen time you've spent on entertainment
-today.
+browser every now and then to remind you how much screen time you've spent on entertainment today.
+
+<div align="center"><img src="./sprites/shime43.png" width="42" alt="43"> <img src="./sprites/shime22.png" width="42" alt="22"> <img src="./sprites/shime4.png" width="42" alt="4"> <img src="./sprites/shime1.png" width="42" alt="1"></div>
 
 ## Install
 1. Go to `chrome://extensions` (or `edge://extensions`) and enable **developer mode**
@@ -15,9 +16,6 @@ Details >> Extension options). Here you can check your shimeji's current mood an
 * The list of what sites are tracked as entertainment
 * The threshold number of minutes where your shimeji's mood deteriorates
 * How often the shimeji appears
-
-## Swap in your own sprite
-
 
 ## Anatomy
 * `background.js`: service worker, manages screen time count, computes mood, and
@@ -38,4 +36,4 @@ Details >> Extension options). Here you can check your shimeji's current mood an
 * Can I swap in my own sprite?  
   Not yet :'\(  I'm working on a feature to generate animation frames for any character though
 * Why is this a browser extension instead of a Java app?  
-  It's a lot easier to distinguish entertainment websites this way, which are personally where I waste most of my time as opposed to apps
+  It's a lot easier to distinguish entertainment websites this way, which are personally where I waste most of my time as opposed to apps, but I may redo this in Java!
