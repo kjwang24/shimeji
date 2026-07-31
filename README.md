@@ -17,20 +17,25 @@ Details >> Extension options). Here you can check your shimeji's current mood an
 * How often the shimeji appears
 
 ## Swap in your own sprite
-Not supported yet :'\(  I'm working on a feature to generate animation frames
-for any inputted character
+
 
 ## Anatomy
 * `background.js`: service worker, manages screen time count, computes mood, and
   fires an `appear` alarm at regular intervals
 * `content.js` / `content.css`: injects the overlay and animates the avatar
 * `options.html` / `options.js`: settings page
-* `manifest.json`: Chrome extension metadata
-* `sprites/` / `animations.md`: manually added, default Kirby animation frames and
-  how they're spliced together
+* `manifest.json`: Manifest V3 extension metadata
+* `sprites/` / `animations.md`: manually added, default Kirby animation frames
+* `animations.md`: human-readable description of how frames are spliced together to
+  make an animation
 
 ## Notes
 * Avatar runs in the browser viewport (extensions can't draw over the OS taskbar)
-* Doesn't work on `chrome://` pages, the web store, or any other page that's
-  strict with script injection
+* Doesn't work on `chrome://` pages, the web store, or any other page that's strict with script injection
 * Artwork is from the [shimeji.org community library](https://shimeji.org/u/cwy7gsoc)
+
+## QnA
+* Can I swap in my own sprite?  
+  Not yet :'\(  I'm working on a feature to generate animation frames for any character though
+* Why is this a browser extension instead of a Java app?  
+  It's a lot easier to distinguish entertainment websites this way, which are personally where I waste most of my time as opposed to apps

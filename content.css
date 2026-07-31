@@ -1,9 +1,9 @@
 .shimeji-root {
   position: fixed;
   right: 8px;
-  bottom: 0;                 /* sits at the very bottom-right of the viewport */
+  bottom: 0;
   z-index: 2147483647;
-  pointer-events: none;      /* never blocks clicks on the page */
+  pointer-events: none;   /* never blocks clicks on the page */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,10 +17,14 @@
 }
 
 .shimeji-bubble {
+  position: absolute;   /* otherwise it messes up the root width*/
+  bottom: calc(100% + 6px);   /* all el div height comes from sprite, so this means 6px above sprite */
+  left: 50%;                         /* these two lines center the */
+  transform: translate(-50%, 6px);   /* bubble inside the el div */
+  width: max-content;
   max-width: 190px;
-  margin-bottom: 6px;
   padding: 6px 10px;
-  font: 12px/1.35 system-ui, -apple-system, Segoe UI, sans-serif;
+  font: 12px/1.35 system-ui, Segoe UI, sans-serif;
   color: #222;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -28,10 +32,9 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
   opacity: 0;
-  transform: translateY(6px);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .shimeji-bubble.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
 }

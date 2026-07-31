@@ -1,12 +1,6 @@
-const DEFAULTS = {
-  entertainmentDomains: [
-    'youtube.com', 'netflix.com', 'reddit.com', 'tiktok.com', 'twitch.tv',
-    'instagram.com', 'x.com', 'twitter.com', 'hulu.com', 'disneyplus.com',
-    'primevideo.com', '9gag.com', 'pinterest.com', 'hbomax.com'
-  ],
-  thresholds: { ok: 30, bad: 60, disastrous: 90 },
-  appearEveryMin: 60
-};
+// settings page, accessed by right clicking extension >> options
+
+import { DEFAULTS } from './defaults.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -53,7 +47,11 @@ async function save() {
 }
 
 $('save').addEventListener('click', save);
-$('test').addEventListener('click', () => chrome.runtime.sendMessage({ type: 'shimeji-test' }));
+document.querySelectorAll('button.test').forEach(btn =>
+  btn.addEventListener('click', () =>
+    chrome.runtime.sendMessage({ type: 'shimeji-test', mood: btn.dataset.mood }, (r) => {
+      if (!chrome.runtime.lastError && r && !r.ok) $('status').textContent = r.reason;
+    })));
 $('reset').addEventListener('click', async () => {
   await chrome.storage.local.set({ totals: {} });
   load();

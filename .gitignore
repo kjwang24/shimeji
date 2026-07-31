@@ -1,10 +1,13 @@
-# OS / editor cruft
+# i don't even know what these are claude put them here
 .DS_Store
 Thumbs.db
 desktop.ini
 *.swp
 .vscode/
 
-# Node (in case tooling is added later)
+# claude perms
+.claude/settings.local.json
+
+# node for deprecated tools that may be revived
 node_modules/
 npm-debug.log*

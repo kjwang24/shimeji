@@ -29,7 +29,7 @@ Message types (all `chrome.runtime` messages): `shimeji-appear` (background → 
 
 ### Time tracking (background.js)
 
-Event-driven and resilient to the service worker being suspended: a "session" (`{domain, counting, sinceTs}`) is persisted in `chrome.storage.local`; every relevant event calls `refresh()`, which **flushes** elapsed time into daily `totals` and starts a fresh session. A 1-minute `flush` alarm keeps long uninterrupted sessions ticking. Long SW-sleep gaps are clamped to 3 min so a suspended worker can't over-count. Storage keys: `config`, `totals` (per-day `ms`, pruned to ~3 weeks), `session`.
+Event-driven and resilient to the service worker being suspended: a "session" (`{domain, counting, sinceTs}`) is persisted in `chrome.storage.local`; every relevant event calls `refresh()`, which accrues elapsed time into `totals` and starts a fresh session. A 1-minute `flush` alarm keeps long uninterrupted sessions ticking. Long SW-sleep gaps are clamped to 3 min so a suspended worker can't over-count. Storage keys: `config`, `totals` (keyed by day; **only today's entry is kept** — `addTime` deletes all other days on write), `session`. Note there is no separate idle check — passive viewing (e.g. a playing video in a focused tab) still counts.
 
 ### Moods
 
@@ -39,7 +39,7 @@ Four moods, ordered by severity: **`good` → `ok` → `bad` → `disastrous`**.
 
 - The avatar is composed of **individual `sprites/shime{N}.png` frames**. A trailing `r` (e.g. `shime22r.png`) is the horizontally-flipped copy of that frame. Frames are ~64px; all frames must be declared in `web_accessible_resources` (`sprites/*.png`) or the browser blocks them from loading into pages.
 - **`animations.md` is the human-authored source of truth** for choreography; the `ANIMATIONS` table in `content.js` is a hand-transcription of it. Each entry is `{id, dx}` where `dx` is the horizontal move (px) when advancing to that frame — **negative = left, positive = right**, 0 if unspecified. Un-flipped frames face/move left (walk-in); `r` frames face/move right (walk-out).
-- **Off-screen walk invariant:** the avatar starts fully off the right edge at `ENTER = 8 + SIZE + 24` and relies on each animation's moves **netting to ~0** so it walks back off. If you edit an animation, keep left/right moves balanced or it won't exit. `ENTER` derives from `SIZE`, which is `5% of window.innerHeight` (responsive to viewport height, recomputed per appearance).
+- **Off-screen walk invariant:** the avatar starts fully off the right edge at `ENTER = 8 + SIZE` and relies on each animation's moves **netting to ~0** so it walks back off. If you edit an animation, keep left/right moves balanced or it won't exit. `SIZE` is `7.5% of window.innerHeight` (responsive, recomputed per appearance). Each `dx` is multiplied by `moveScale = SIZE / 64` (the frames were authored for a 64px sprite), so the walk distance scales with the sprite — without it, larger viewports enlarge `ENTER` but not the travel, and shorter animations never fully walk on-screen.
 - **The speech bubble must stay `position: absolute`** (in content.css). It sits in a flex root; if it's a normal flow child, a long bubble line widens the root and shifts the centered sprite left, breaking the `ENTER` off-screen offset (long-lined moods then fail to walk off).
 
 ### Preview vs. normal appearance (why two code paths in background.js)
@@ -48,7 +48,7 @@ Four moods, ordered by severity: **`good` → `ok` → `bad` → `disastrous`**.
 
 ### Config merge
 
-`getConfig()` (background) and `load()` (options) deep-merge saved config over `DEFAULTS`, with a **separate nested spread for `thresholds`** so a partially-saved thresholds object doesn't wipe the other threshold defaults. `DEFAULTS` is duplicated in both `background.js` and `options.js` — keep them in sync.
+`getConfig()` (background) and `load()` (options) deep-merge saved config over `DEFAULTS`, with a **separate nested spread for `thresholds`** so a partially-saved thresholds object doesn't wipe the other threshold defaults. `DEFAULTS` is defined once in `defaults.js` and imported by both `background.js` and `options.js` as ES modules — so the background service worker is declared `"type": "module"` in the manifest and `options.html` loads `options.js` with `<script type="module">`. `defaults.js` is extension-origin only (no `web_accessible_resources` entry needed).
 
 ## Stale code — do not trust as documentation
 

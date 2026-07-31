@@ -2,10 +2,10 @@
   "manifest_version": 3,
   "name": "Shimeji Screen-Time",
   "version": "0.1.0",
-  "description": "A cute avatar that walks in from the bottom-right and reacts to how long you've spent on entertainment sites today.",
+  "description": "A cute avatar that walks onscreen periodically to react to how long you've spent on entertainment sites today.",
   "permissions": ["tabs", "storage", "alarms"],
   "host_permissions": ["<all_urls>"],
-  "background": { "service_worker": "background.js" },
+  "background": { "service_worker": "background.js", "type": "module" },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
