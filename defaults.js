@@ -8,5 +8,6 @@ export const DEFAULTS = {
   ],
   thresholds: { ok: 30, bad: 60, disastrous: 90 }, // minutes a day
   appearEveryMin: 60,
-  flushEveryMin: 1 // not used by options.js
+  flushEveryMin: 1, // not used by options.js
+  enabled: true // master on/off toggle
 };

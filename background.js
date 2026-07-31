@@ -63,7 +63,7 @@ async function refresh() {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true }); // identify currently active tab
     host = tab ? hostOf(tab.url) : null;
   }
-  await chrome.storage.local.set({ session: { domain: host, counting: !!(active && isEnt(host, cfg)), sinceTs: now } });
+  await chrome.storage.local.set({ session: { domain: host, counting: !!(cfg.enabled && active && isEnt(host, cfg)), sinceTs: now } });
 }
 
 /* mood determination */
@@ -104,6 +104,7 @@ async function sendAppear(tabId, forceMood) {
 
 // make sprite try to appear on current tab (for natural appearance or toolbar click)
 async function appearOnActiveTab(forceMood) {
+  if (!(await getConfig()).enabled) return;
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   if (!tab || !tab.id || BLOCKED.test(tab.url || '')) return;
   try { await sendAppear(tab.id, forceMood); }
@@ -112,6 +113,7 @@ async function appearOnActiveTab(forceMood) {
 
 // make sprite appear on last active injectable tab (for preview buttons on options.html)
 async function previewOnTab(forceMood) {
+  if (!(await getConfig()).enabled) return { ok: false, reason: "The extension isn't on right now" };
   const tabs = (await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] })) // everything http
     .filter(t => !BLOCKED.test(t.url || ''));
   if (!tabs.length) return { ok: false, reason: 'Open a normal website tab first, then try previewing again' };
@@ -151,6 +153,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
   else if (msg.type === 'shimeji-config-updated') {
     ensureAlarms();
+    refresh();
   }
 });
 

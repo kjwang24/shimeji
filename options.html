@@ -19,11 +19,15 @@
     .test { background: #eee; }
     #reset { background: rgb(228, 226, 208); color: rgb(170, 148, 51); }
     .saved { color: #2a8; font-weight: 600; margin-left: 8px; }
+    #toggle { margin-top: 8px; }
+    #toggle.on { background: #2a8; color: #fff; }
+    #toggle.off { background: #eee; color: #666; }
   </style>
 </head>
 <body>
   <h1>Shimeji Settings</h1>
   <p id="status">Loading...</p>
+  <button id="toggle" class="on">Extension on</button>
 
   <label>Entertainment sites <span class="hint">(one domain per line, e.g. youtube.com)</span></label>
   <textarea id="domains" rows="8"></textarea>

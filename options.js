@@ -4,10 +4,19 @@ import { DEFAULTS } from './defaults.js';
 
 const $ = (id) => document.getElementById(id);
 
+let enabled = true;
+
+function renderToggle() {
+  $('toggle').textContent = enabled ? 'Extension on' : 'Extension off';
+  $('toggle').className = enabled ? 'on' : 'off';
+}
+
 async function load() {
   const { config } = await chrome.storage.local.get('config');
   const c = { ...DEFAULTS, ...(config || {}), thresholds: { ...DEFAULTS.thresholds, ...(config?.thresholds || {}) } };
 
+  enabled = c.enabled !== false;
+  renderToggle();
   $('domains').value = c.entertainmentDomains.join('\n');
   $('t-ok').value = c.thresholds.ok;
   $('t-bad').value = c.thresholds.bad;
@@ -20,8 +29,7 @@ async function load() {
   });
 }
 
-// Read a whole-minute value >= 1 from a field, falling back to `def` for
-// empty, non-numeric, or out-of-range (zero/negative) input.
+// number of mins in a limit has to be >= 1
 const numOr = (id, def) => {
   const n = Math.floor(Number($(id).value));
   return Number.isFinite(n) && n >= 1 ? n : def;
@@ -36,7 +44,8 @@ async function save() {
       bad: numOr('t-bad', DEFAULTS.thresholds.bad),
       disastrous: numOr('t-disastrous', DEFAULTS.thresholds.disastrous)
     },
-    appearEveryMin: numOr('appear', DEFAULTS.appearEveryMin)
+    appearEveryMin: numOr('appear', DEFAULTS.appearEveryMin),
+    enabled
   };
   await chrome.storage.local.set({ config });
   chrome.runtime.sendMessage({ type: 'shimeji-config-updated' });
@@ -46,12 +55,22 @@ async function save() {
   setTimeout(() => { msg.textContent = ''; }, 2000);
 }
 
+$('toggle').addEventListener('click', async () => {
+  enabled = !enabled;
+  renderToggle();
+  const { config } = await chrome.storage.local.get('config');
+  await chrome.storage.local.set({ config: { ...(config || {}), enabled } });
+  chrome.runtime.sendMessage({ type: 'shimeji-config-updated' });
+});
+
 $('save').addEventListener('click', save);
+
 document.querySelectorAll('button.test').forEach(btn =>
   btn.addEventListener('click', () =>
     chrome.runtime.sendMessage({ type: 'shimeji-test', mood: btn.dataset.mood }, (r) => {
       if (!chrome.runtime.lastError && r && !r.ok) $('status').textContent = r.reason;
     })));
+
 $('reset').addEventListener('click', async () => {
   await chrome.storage.local.set({ totals: {} });
   load();
